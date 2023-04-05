@@ -1,7 +1,6 @@
-aiofiles==0.8.0
-asqlite==2.0.0a0
-asyncpraw==7.7.0
-discord.py==2.2.2
-jishaku==2.5.1a472+gecdd201.master
-psutil==5.9.4
-python-dotenv==1.0.0
+discord.py
+asyncpraw
+aiofiles
+psutil
+jishaku
+git+https://github.com/Rapptz/asqlite
