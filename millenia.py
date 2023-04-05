@@ -16,9 +16,9 @@ from utils.context import Context
 load_dotenv()
 
 DB_FILENAME = "millenia.sqlite"
-COMMAND_PREFIX = "m."  # Probably want to change this
+COMMAND_PREFIX = "m."
 INTENTS = discord.Intents.all()  # probably want to change this too.
-TOKEN = str(os.getenv("DISCORD_BOT_TOKEN"))  # however you want to get this, probably reading it in from somewhere
+TOKEN = str(os.getenv("DISCORD_BOT_TOKEN"))
 
 
 class Millenia(commands.Bot):
