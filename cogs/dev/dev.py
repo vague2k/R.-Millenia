@@ -21,7 +21,9 @@ class Developer(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.is_owner()
-    async def sync(self, ctx: GuildContext, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None) -> None:
+    async def sync(
+        self, ctx: GuildContext, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None
+    ) -> None:
         """Syncs command tree.
 
         Parameters
@@ -71,7 +73,11 @@ class Developer(commands.Cog):
 
         message: discord.Message = discord.utils.get(
             self.bot.cached_messages, id=payload.message_id
-        ) or await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)  # type: ignore
+        ) or await self.bot.get_channel(
+            payload.channel_id
+        ).fetch_message(  # type: ignore
+            payload.message_id
+        )
 
         if message.author.id == self.bot.user.id:  # type: ignore
             await message.delete()

@@ -52,12 +52,11 @@ class Millenia(commands.Bot):
 
 
 async def main():
-
     discord.utils.setup_logging()  # Could change this out for however you want logging to be setup
 
     async with (
         asqlite.create_pool(DB_FILENAME) as pool,
-        Millenia(command_prefix=COMMAND_PREFIX, pool=pool, intents=INTENTS) as bot
+        Millenia(command_prefix=COMMAND_PREFIX, pool=pool, intents=INTENTS) as bot,
     ):
         await bot.start(TOKEN)
 

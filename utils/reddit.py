@@ -11,11 +11,10 @@ USER_AGENT = os.getenv("REDDIT_USER_AGENT")
 USERNAME = os.getenv("REDDIT_USERNAME")
 PASSWORD = os.getenv("REDDIT_PASSWORD")
 
+
 def reddit_object():
-    reddit = asyncpraw.Reddit(client_id = CLIENT_ID,
-                              client_secret = CLIENT_SECRET,
-                              user_agent = USER_AGENT,
-                              user_name = USERNAME,
-                              password = PASSWORD)
-    
+    reddit = asyncpraw.Reddit(
+        client_id=CLIENT_ID, client_secret=CLIENT_SECRET, user_agent=USER_AGENT, user_name=USERNAME, password=PASSWORD
+    )
+
     return reddit

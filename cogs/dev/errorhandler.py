@@ -23,7 +23,9 @@ class ErrorHandler(commands.Cog):
             if interaction.response.is_done():
                 await interaction.followup.send(f"A little too quick there, try again in {error.retry_after:,.1f} seconds.")
             else:
-                await interaction.response.send_message(f"A little too quick there, try again in {error.retry_after:,.1f} seconds.")
+                await interaction.response.send_message(
+                    f"A little too quick there, try again in {error.retry_after:,.1f} seconds."
+                )
 
         else:
             trace = "".join(traceback.format_exception(type(error), error, error.__traceback__))
@@ -54,7 +56,9 @@ class ErrorHandler(commands.Cog):
                 pass
 
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(f"A little too quick there. Try again in {error.retry_after:,.1f} seconds.", delete_after=4.0, ephemeral=True)
+            await ctx.send(
+                f"A little too quick there. Try again in {error.retry_after:,.1f} seconds.", delete_after=4.0, ephemeral=True
+            )
 
         elif isinstance(error, commands.MissingPermissions):
             await ctx.send(f"You do not have permission to use that command.", ephemeral=True)
