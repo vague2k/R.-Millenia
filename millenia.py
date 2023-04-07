@@ -38,6 +38,24 @@ class Millenia(commands.Bot):
         os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
         os.environ["JISHAKU_HIDE"] = "True"
 
+        async with self.pool.acquire() as conn:
+            await conn.execute(
+                """
+                DROP TABLE removeLeaderboard
+                """
+            )
+            await conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS removeLeaderboard(
+                    server_id INTERGER,
+                    member_id INTEGER,
+                    count INTEGER,
+                    PRIMARY KEY(server_id, member_id)
+                )
+                """
+            )
+            await conn.commit()
+
         # This is an Umbra moment, loads anything in the cogs folder that doesn't start with an _
         for file in sorted(pathlib.Path("cogs").glob("**/[!_]*.py")):
             ext = ".".join(file.parts).removesuffix(".py")
