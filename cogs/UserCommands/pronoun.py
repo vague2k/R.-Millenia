@@ -7,7 +7,6 @@ from discord.ext import commands
 from discord.utils import find
 
 from millenia import Millenia
-from utils.context import GuildContext
 
 _logger = logging.getLogger(__name__)
 
@@ -30,14 +29,18 @@ class PronounGroup(commands.GroupCog, group_name="pronoun"):
             role = await interaction.guild.create_role(name=pronouns, mentionable=False)
 
         if role in member.roles:  # type: ignore
-            await interaction.response.send_message(
-                "It looks like you already have this pronoun as a role. If you would like to remove it, please use `m.pronoun remove`.",
-                ephemeral=True,
+            has_role_embed = discord.Embed(title="", description="", color=0xD97373)
+            has_role_embed.add_field(
+                name="",
+                value="It looks like you already have this pronoun as a role.\nIf you would like to remove it, please use `/pronoun <remove>`.",
             )
+            await interaction.response.send_message(embed=has_role_embed, delete_after=60)
 
         else:
+            added_embed = discord.Embed(title="", description="", color=0xB2D973)
+            added_embed.add_field(name="", value=f"The role you chose, **{role}** has been added,\nEnjoy!")
             await member.add_roles(role)  # type: ignore
-            await interaction.response.send_message(f"The role you chose, **{role}** has been added, Enjoy!", ephemeral=True)
+            await interaction.response.send_message(embed=added_embed, delete_after=60)
 
     @app_commands.command(name="remove", description="Remove a pronoun role from your roles")
     @app_commands.describe(remove="Here's a list of pronouns your currently allowed to choose from")
@@ -54,16 +57,18 @@ class PronounGroup(commands.GroupCog, group_name="pronoun"):
             role = await interaction.guild.create_role(name=remove, mentionable=False)
 
         if role not in member.roles:  # type: ignore
-            await interaction.response.send_message(
-                "It looks like this role was either never given or already removed. If you would like to add it, please use `m.pronoun give`.",
-                ephemeral=True,
+            never_had_embed = discord.Embed(title="", description="", color=0xD97373)
+            never_had_embed.add_field(
+                name="",
+                value="It looks like this role was either never given or already removed.\nIf you would like to add it, please use `/pronoun <give>`.",
             )
+            await interaction.response.send_message(embed=never_had_embed, delete_after=60)
 
         else:
+            removed_embed = discord.Embed(title="", description="", color=0xB2D973)
+            removed_embed.add_field(name="", value=f"The role you chose, **{role}** has been removed,\nEnjoy!")
             await member.remove_roles(role)  # type: ignore
-            await interaction.response.send_message(
-                f"The role you chose, **{role}** has been removed, Enjoy!", ephemeral=True
-            )
+            await interaction.response.send_message(embed=removed_embed, delete_after=60)
 
 
 async def setup(bot: Millenia):
