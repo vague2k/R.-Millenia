@@ -7,6 +7,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import GroupCog
 
 from millenia import Millenia
+from utils.embed import create_embed_failure, create_embed_success
 from utils.reddit import reddit_object
 
 _logger = logging.getLogger(__name__)
@@ -37,22 +38,17 @@ class RedditPostsBackgroundTasks(GroupCog, group_name="reddit"):
             self.subreddit = subreddit
             assert interaction.guild is not None
 
-            subreddit_chosen_embed = discord.Embed(title="", description="", color=0xB2D973)
-            subreddit_chosen_embed.add_field(
-                name="",
-                value=f"You hottest posts for the **r/{subreddit}** subreddit\nwill be sent to your channel of choice,**#{channel.name}**",
+            subreddit_chosen_embed = create_embed_success(
+                message=f"You hottest posts for the **r/{subreddit}** subreddit\nwill be sent to your channel of choice,**#{channel.name}**"
             )
             await interaction.response.send_message(embed=subreddit_chosen_embed, delete_after=60)
             user_chosen_channel = await interaction.guild.fetch_channel(channel.id)
             self.my_task.start(user_chosen_channel)
 
         else:
-            current_loop_active_embed = discord.Embed(title="", description="", color=0xD97373)
-            current_loop_active_embed.add_field(
-                name="",
-                value="It seems there's already a background task being looped through.\nIf you would like to cancel this task, use `/reddit <canceltask>`",
+            current_loop_active_embed = create_embed_failure(
+                message="It seems there's already a background task being looped through.\nIf you would like to cancel this task, use `/reddit <canceltask>`"
             )
-
             await interaction.response.send_message(embed=current_loop_active_embed, delete_after=60)
 
     ### Command to CANCEL the daily tasks of posting a user chosen reddit thread in a user chosen channel ###
@@ -63,15 +59,12 @@ class RedditPostsBackgroundTasks(GroupCog, group_name="reddit"):
     async def stop_current_reddit_task(self, interaction: discord.Interaction):
         if self.my_task.is_running() == True:
             self.my_task.cancel()
-            cancel_task_embed = discord.Embed(title="", description="", color=0xB2D973)
-            cancel_task_embed.add_field(name="", value="The current task has been canceled")
+            cancel_task_embed = create_embed_success(message="The current task has been canceled")
             await interaction.response.send_message(embed=cancel_task_embed, delete_after=60)
 
         else:
-            no_task_active_embed = discord.Embed(title="", description="")
-            no_task_active_embed.add_field(
-                name="",
-                value="There is no task currently running,\nif you'd like to start one considering using `/reddit <starttask>`",
+            no_task_active_embed = create_embed_failure(
+                "There is no task currently running,\nif you'd like to start one considering using `/reddit <starttask>`"
             )
             await interaction.response.send_message(embed=no_task_active_embed, delete_after=60)
 
