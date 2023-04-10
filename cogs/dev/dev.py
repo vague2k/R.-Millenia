@@ -116,9 +116,9 @@ class Developer(commands.Cog):
         """Run a command, bypassing checks and/or cooldowns, optionally in another channel, optionally as another person.
 
         ex:
-            - m.sudo! #general @fretgfr sync ~
-            - m.sudo! @fretgfr sync ~
-            - m.sudo! sync ~      <----- This one runs it as you and allows you to bypass cooldowns on your own commands without a custom cooldown.
+            - aml sudo! #general @fretgfr sync ~
+            - aml sudo! @fretgfr sync ~
+            - aml sudo! sync ~      <----- This one runs it as you and allows you to bypass cooldowns on your own commands without a custom cooldown.
         """
         if not ctx.prefix:
             return
