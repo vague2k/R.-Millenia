@@ -1,11 +1,7 @@
-#
-# How I usually lay out an extension, feel free to use it if you want, or don't
-#
 import logging
+
 import discord
 from discord.ext import commands
-import asqlite
-
 
 from millenia import Millenia
 
@@ -27,7 +23,6 @@ class Events(commands.Cog):
 
         async with self.bot.pool.acquire() as conn:
             async with conn.cursor() as cursor:
-                await cursor.execute("""SELECT guild_id FROM removeLeaderboard """)
                 await cursor.execute(
                     """
                         INSERT INTO removeLeaderboard(
