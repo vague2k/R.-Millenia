@@ -16,8 +16,8 @@ from utils.context import Context
 load_dotenv()
 
 DB_FILENAME = "millenia.sqlite"
-COMMAND_PREFIX = "m."
-INTENTS = discord.Intents.all()  # probably want to change this too.
+COMMAND_PREFIX = "aml "
+INTENTS = discord.Intents.all()
 TOKEN = str(os.getenv("DISCORD_BOT_TOKEN"))
 
 
@@ -30,33 +30,18 @@ class Millenia(commands.Bot):
         self.STARTED_AT = discord.utils.utcnow()
 
     async def setup_hook(self) -> None:
-        # Load jishasku, allows you to a lot of cool stuff from your bot
-        # https://github.com/Gorialis/jishaku
-        # You might want to change some of the settings, but those are the ones I use...
         await self.load_extension("jishaku")
         os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
         os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
         os.environ["JISHAKU_HIDE"] = "True"
 
-        async with self.pool.acquire() as conn:
-            await conn.execute(
-                """
-                DROP TABLE removeLeaderboard
-                """
-            )
-            await conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS removeLeaderboard(
-                    server_id INTERGER,
-                    member_id INTEGER,
-                    count INTEGER,
-                    PRIMARY KEY(server_id, member_id)
-                )
-                """
-            )
-            await conn.commit()
+        with open("schema.sql", "r") as file:
+            schema = file.read()
 
-        # This is an Umbra moment, loads anything in the cogs folder that doesn't start with an _
+        async with self.pool.acquire() as conn:
+            await conn.executescript(schema)
+
+        # Loads anything in the cogs folder that doesn't start with an _
         for file in sorted(pathlib.Path("cogs").glob("**/[!_]*.py")):
             ext = ".".join(file.parts).removesuffix(".py")
             await self.load_extension(ext)
