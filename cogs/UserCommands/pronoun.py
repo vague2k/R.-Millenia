@@ -18,6 +18,19 @@ class PronounGroup(commands.GroupCog, group_name="pronoun"):
         self.bot = bot
 
     def get_role_named(self, roles: list[discord.Role], role_name: str) -> discord.Role | None:
+        """Finds a specific role in a list of discord.Role
+
+        Parameters
+        ----------
+        roles : list[discord.Role]
+
+        role_name : str
+            The name of the role you want to look for
+
+        Returns
+        -------
+        discord.Role | None
+        """
         role_name = role_name.lower()
         return find(lambda role: role.name.lower() == role_name, roles)
 
@@ -26,6 +39,15 @@ class PronounGroup(commands.GroupCog, group_name="pronoun"):
     async def give_pronoun_role(
         self, interaction: discord.Interaction, pronouns: Literal["he/him", "she/her", "they/them", "it/its", "any pronouns"]
     ):
+        """Give yourself a pronoun as a role from a determined list of pronouns
+
+        Parameters
+        ----------
+        interaction : discord.Interaction
+
+        pronouns : Literal[...]
+            The list of roles to be chosen from
+        """
         member = interaction.user
 
         assert interaction.guild is not None
@@ -49,6 +71,15 @@ class PronounGroup(commands.GroupCog, group_name="pronoun"):
     async def change_pronoun_role(
         self, interaction: discord.Interaction, remove: Literal["he/him", "she/her", "they/them", "it/its", "any pronouns"]
     ):
+        """Remove a pronoun role from a determined list of pronouns
+
+        Parameters
+        ----------
+        interaction : discord.Interaction
+
+        pronouns : Literal[...]
+            The list of roles to be chosen from
+        """
         member = interaction.user
 
         assert interaction.guild is not None

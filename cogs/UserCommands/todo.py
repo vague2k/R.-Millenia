@@ -27,6 +27,13 @@ class ToDoCog(commands.Cog):
 
     @todo.command(name="add")
     async def add_todo_item(self, ctx: GuildContext, *, content: str):
+        """Add an item to your to-do list.
+
+        Parameters
+        ----------
+        content : str
+            The message you want to add to your to-do list.
+        """
         if not ctx.guild:
             return
 
@@ -37,9 +44,9 @@ class ToDoCog(commands.Cog):
         added_at = discord.utils.utcnow().isoformat()
 
         async with self.bot.pool.acquire() as conn:
-            await conn.fetchone(
+            row = await conn.fetchone(
                 """
-            INSERT INTO todos(owner_id, guild_id, channel_id, message_id, content, added_at) VALUES (?, ?, ?, ?, ?, ?)""",
+            INSERT INTO todos(owner_id, guild_id, channel_id, message_id, content, added_at) VALUES (?, ?, ?, ?, ?, ?) RETURNING id""",
                 owner_id,
                 guild_id,
                 channel_id,
@@ -49,7 +56,8 @@ class ToDoCog(commands.Cog):
             )
             await conn.commit()
 
-        added_to_list_embed = create_embed_success(message="Added that to your list.")
+        added_to_list_embed = create_embed_success(message=f"Added that to your list.")
+        added_to_list_embed.set_footer(text=f"ID: {row['id']}")
         await ctx.send(embed=added_to_list_embed)
 
     @todo.command(name="list")
@@ -74,34 +82,45 @@ class ToDoCog(commands.Cog):
 
     @todo.command(name="remove")
     async def remove_todo_item(self, ctx: GuildContext, item_id: int):
+        """Remove an item from your to-do list.
+
+        Parameters
+        ----------
+        item_id : int
+            The id of the to-do list item.
+        """
         async with self.bot.pool.acquire() as conn:
-            results = await conn.fetchall(
-                """SELECT * FROM todos WHERE owner_id = ? AND guild_id = ?""", ctx.author.id, ctx.guild.id
+            row = await conn.fetchone(
+                """DELETE FROM todos WHERE owner_id = ? AND guild_id = ? AND id = ? RETURNING *""",
+                ctx.author.id,
+                ctx.guild.id,
+                item_id,
             )
 
-        if not results:
-            no_todos_embed = create_embed_failure(message="You don't seem to have any todos.")
-            await ctx.send(embed=no_todos_embed)
-            return
-
-        entries = [TodoItem.from_row(row) for row in results]
-
-        for entry in entries:
-            if entry.id == item_id and ctx.author.id == entry.owner_id:
-                await conn.execute("""DELETE FROM todos WHERE id = ?""", item_id)
-                remove_embed = create_embed_success(message=f"The item:\n\n**{entry.content}**\n\nhas been removed.")
+            if row:
+                remove_embed = create_embed_success(message=f"The item\n\n{row['content']}\n\nhas been removed.")
                 await ctx.send(embed=remove_embed)
+                return
 
-            if entry.id != item_id:
-                not_valid_embed = create_embed_failure(message="The id given was either not valid.")
-                await ctx.send(embed=not_valid_embed)
-            break
+            unable_to_remove_emebed = create_embed_failure(message=f"Unable to remove todo item with ID: {item_id}")
+            await ctx.send(embed=unable_to_remove_emebed)
 
 
 class ThisPaginator(BaseButtonPaginator[TodoItem, Millenia]):
     # The subclassed format page function that implements the logic of creating our embed.
     # You can do this however you please, but in this example we'll add a field for each item.
     async def format_page(self, entries: List[TodoItem], /) -> discord.Embed:
+        """Formats the however you want the page of your embed to look
+
+        Parameters
+        ----------
+        entries : List[TodoItem]
+            The list of entries of your TodoItem class
+
+        Returns
+        -------
+        discord.Embed
+        """
         entry = entries[0]
         embed = discord.Embed(
             title="My todo list",

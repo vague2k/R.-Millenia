@@ -17,27 +17,7 @@ TargetType: TypeAlias = Union["discord.Interaction[BotT]", "commands.Context[Bot
 class BaseButtonPaginator(Generic[T, BotT], discord.ui.View, abc.ABC):
     """The base implementation of a button paginator. This class should be inherited
     then the custom instance defined.
-    .. code-block:: python3
-        import discord
-        from discord import app_commands
-        # My custom bot subclass:
-        class MyBot(commands.Bot):
-            ...
-        class ThisPaginator(BaseButtonPaginator[int, MyBot]):
-            async def format_page(self, entries: List[int], /) -> discord.Embed:
-                embed = discord.Embed(title='Welcome to my paginator!!')
-                for index, entry in enumerate(entries):
-                    embed.add_field(name=str(index), value=entry)
-                embed.set_footer(text='Page {0.current_page}/{0.total_pages}'.format(self))
-                return embed
-        # And in a command as so:
-        @app_commands.command()
-        async def my_view_paginator(interaction: discord.Interaction[MyBot]) -> None:
-            # Create a new instance of our paginator.
-            view = ThisPaginator(entries=list(range(10)), target=interaction)
-            # Generate the first embed for the given page
-            embed = await view.embed()
-            await interaction.response.send_message(embed=embed, view=view)
+
     Parameters
     ----------
     entries: List[Any]

@@ -26,9 +26,9 @@ class Leaderboard(commands.GroupCog, group_name="leaderboard"):
 
             results = await conn.fetchall(
                 """
-                SELECT * FROM removeLeaderboard 
-                WHERE server_id = ? 
-                ORDER BY count DESC 
+                SELECT * FROM removeLeaderboard
+                WHERE server_id = ?
+                ORDER BY count DESC
                 LIMIT 10
                 """,
                 (interaction.guild.id),

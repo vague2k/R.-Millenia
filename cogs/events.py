@@ -14,6 +14,15 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_completion(self, interaction: discord.Interaction, command: discord.app_commands.Command):
+        """Track /pronoun remove command usage in a database for leaderboard purposes
+
+        Parameters
+        ----------
+        interaction : discord.Interaction
+
+        command : discord.app_commands.Command
+
+        """
         assert interaction.guild is not None
         member = interaction.user
         guild = interaction.guild

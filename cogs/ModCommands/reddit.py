@@ -34,6 +34,18 @@ class RedditPostsBackgroundTasks(GroupCog, group_name="reddit"):
     )
     @commands.has_guild_permissions(manage_channels=True, manage_messages=True, view_audit_log=True)
     async def start_reddit_task(self, interaction: discord.Interaction, channel: discord.TextChannel, subreddit: str):
+        """Starts a task that allows a user to choose where they want a daily subreddit of their choosing.
+
+        Parameters
+        ----------
+        interaction : discord.Interaction
+            The interaction of the command
+        channel : discord.TextChannel
+            A user input of their guilds text channels
+        subreddit : str
+            The subreddit the user wants to see posts from
+            (*This parameter is case sensitive*)
+        """
         if self.my_task.is_running() == False:
             self.subreddit = subreddit
             assert interaction.guild is not None
@@ -57,6 +69,13 @@ class RedditPostsBackgroundTasks(GroupCog, group_name="reddit"):
     )
     @commands.has_guild_permissions(manage_channels=True, manage_messages=True, view_audit_log=True)
     async def stop_current_reddit_task(self, interaction: discord.Interaction):
+        """Stops the current reddit task.
+
+        Parameters
+        ----------
+        interaction : discord.Interaction
+            The interaction of this command.
+        """
         if self.my_task.is_running() == True:
             self.my_task.cancel()
             cancel_task_embed = create_embed_success(message="The current task has been canceled")
