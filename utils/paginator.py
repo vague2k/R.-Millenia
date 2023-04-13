@@ -50,6 +50,7 @@ class BaseButtonPaginator(Generic[T, BotT], discord.ui.View, abc.ABC):
 
         self._current_page_index = 0
         self.pages = [entries[i : i + per_page] for i in range(0, len(entries), per_page)]
+        self.bot: Optional[BotT] = target and (target.client if isinstance(target, discord.Interaction) else target.bot)
 
     @property
     def max_page(self) -> int:
