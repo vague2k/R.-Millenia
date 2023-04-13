@@ -90,8 +90,8 @@ class Developer(commands.Cog):
         """Run a command as another user optionally in another channel. This command respects checks and cooldowns.
 
         ex:
-            - m.sudo #general @fretgfr sync ~
-            - m.sudo @fretgfr sync ~
+            - aml sudo #general @fretgfr sync ~
+            - aml sudo @fretgfr sync ~
         """
         if not ctx.prefix:
             return
