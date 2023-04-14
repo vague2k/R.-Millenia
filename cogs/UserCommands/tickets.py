@@ -72,8 +72,6 @@ class TicketSystem(commands.Cog):
     @commands.is_owner()
     async def all(self, ctx: Context):
         if not self.bot.is_owner:
-            # not_bot_owner_embed = create_embed_failure(message="You are not the owner of this bot.")
-            # await ctx.send(embed=not_bot_owner_embed, ephemeral=True)
             return
 
         async with self.bot.pool.acquire() as conn:
@@ -93,10 +91,9 @@ class TicketSystem(commands.Cog):
         await ctx.send(embed=handle_tickets_embed, view=view)
 
     @ticket.command()
+    @commands.is_owner()
     async def resolve(self, ctx: Context, item_id: int, comment: str | None):
         if not self.bot.is_owner:
-            # not_bot_owner_embed = create_embed_failure(message="You are not the owner of this bot.")
-            # await ctx.send(embed=not_bot_owner_embed, ephemeral=True)
             return
 
         if comment is None:
@@ -201,9 +198,9 @@ class BotOwnerPaginator(BaseButtonPaginator[TicketItem, Millenia]):
 
 
 async def setup(bot: Millenia):
-    _logger.info("Loading cog SampleCog")
+    _logger.info("Loading cog Tickets")
     await bot.add_cog(TicketSystem(bot))
 
 
 async def teardown(_: Millenia):
-    _logger.info("Unloading cog SampleCog")
+    _logger.info("Unloading cog Tickets")
