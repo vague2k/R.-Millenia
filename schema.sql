@@ -1,5 +1,3 @@
-CREATE TABLE if not EXISTS sqlite_sequence(name,seq);
-
 CREATE TABLE if not EXISTS removeLeaderboard(
     server_id INTERGER,
     user_id INTEGER,
