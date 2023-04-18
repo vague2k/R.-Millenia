@@ -8,5 +8,5 @@ Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
 
 ## Special thanks
-People who have helped extensively along the way
+People who have helped extensively along the way<br />
 fretgfr, LeoCx1000
