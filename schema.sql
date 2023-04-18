@@ -1,4 +1,13 @@
-CREATE TABLE IF NOT EXISTS todos(
+CREATE TABLE if not EXISTS sqlite_sequence(name,seq);
+
+CREATE TABLE if not EXISTS removeLeaderboard(
+    server_id INTERGER,
+    user_id INTEGER,
+    count INTEGER,
+    PRIMARY KEY(server_id, user_id)
+);
+
+CREATE TABLE if not EXISTS todos(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     owner_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
@@ -7,15 +16,7 @@ CREATE TABLE IF NOT EXISTS todos(
     content TEXT NOT NULL,
     added_at TEXT NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS removeLeaderboard(
-    server_id INTERGER, 
-    user_id INTEGER, 
-    count INTEGER, 
-    PRIMARY KEY(server_id, member_id)
-);
-
-CREATE TABLE IF NOT EXISTS tickets(
+CREATE TABLE if not EXISTS tickets(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     owner_id INTEGER NOT NULL,
     guild_id INTEGER NOT NULL,
