@@ -62,6 +62,8 @@ class ToDoCog(commands.Cog):
 
     @todo.command(name="list")
     async def list_all_todo_items(self, ctx: GuildContext):
+        """List all your todo items"""
+
         async with self.bot.pool.acquire() as conn:
             results = await conn.fetchall(
                 """SELECT * FROM todos WHERE owner_id = ? AND guild_id = ?""", ctx.author.id, ctx.guild.id
@@ -82,7 +84,7 @@ class ToDoCog(commands.Cog):
 
     @todo.command(name="remove")
     async def remove_todo_item(self, ctx: GuildContext, item_id: int):
-        """Remove an item from your to-do list.
+        """Remove an item from your to-do list using the item id.
 
         Parameters
         ----------
