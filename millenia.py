@@ -4,6 +4,7 @@ import asyncio
 import datetime
 import os
 import pathlib
+import sys
 from typing import Union
 
 import asqlite
@@ -15,10 +16,12 @@ from utils.context import Context
 
 load_dotenv()
 
-DB_FILENAME = "millenia.sqlite"
-COMMAND_PREFIX = "aml "
+TESTING = sys.platform == "win32"
+
+DB_FILENAME = "millenia.sqlite" if not TESTING else "test-millenia.sqlite"
+COMMAND_PREFIX = "aml " if not TESTING else "amt "
 INTENTS = discord.Intents.all()
-TOKEN = str(os.getenv("DISCORD_BOT_TOKEN"))
+TOKEN = str(os.getenv("DISCORD_BOT_TOKEN")) if not TESTING else str(os.getenv("TEST_BOT_TOKEN"))
 
 
 class Millenia(commands.Bot):
