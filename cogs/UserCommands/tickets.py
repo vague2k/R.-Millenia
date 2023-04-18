@@ -1,11 +1,11 @@
 import logging
-from typing import List
+from typing import Any, List
 
 import discord
 from discord.ext import commands
 
 from millenia import Millenia
-from utils.constants import GREEN_EMBED_COLOR, RED_EMBED_COLOR
+from utils.constants import GREEN_EMBED_COLOR
 from utils.context import Context, GuildContext
 from utils.dataclasses import TicketItem
 from utils.embed import create_embed_failure, create_embed_success
@@ -20,10 +20,18 @@ class TicketSystem(commands.Cog):
 
     @commands.group()
     async def ticket(self, ctx: Context):
-        pass
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help(ctx.command)
 
     @ticket.command()
     async def submit(self, ctx: GuildContext, *, content: str):
+        """Submit a ticket for the bot dev to look at
+
+        Parameters
+        ----------
+        content : str
+            The submissions you would like to input
+        """
         if not ctx.guild:
             return
 
@@ -48,10 +56,16 @@ class TicketSystem(commands.Cog):
 
         ticket_submitted_embed = create_embed_success(message=f"Your ticket has been submitted.\nThank you!")
         ticket_submitted_embed.set_footer(text=f"Ticket ID: {row['id']}")
-        await ctx.send(embed=ticket_submitted_embed, ephemeral=True)
+        await ctx.send(embed=ticket_submitted_embed)
 
     @ticket.command()
     async def check(self, ctx: GuildContext):
+        """Check how many ticket submissions you made
+
+        Parameters
+        ----------
+        ctx : GuildContext
+        """
         async with self.bot.pool.acquire() as conn:
             results = await conn.fetchall("""SELECT * FROM tickets WHERE owner_id = ?""", ctx.author.id)
 
@@ -66,13 +80,12 @@ class TicketSystem(commands.Cog):
 
         user_tickets = await view.embed()
 
-        await ctx.send(embed=user_tickets, view=view, ephemeral=True)
+        await ctx.send(embed=user_tickets, view=view)
 
     @ticket.command()
     @commands.is_owner()
     async def all(self, ctx: Context):
-        if not self.bot.is_owner:
-            return
+        """Check all the tickets submissions made by users accross all servers that the bot is in"""
 
         async with self.bot.pool.acquire() as conn:
             results = await conn.fetchall("""SELECT * FROM tickets""")
@@ -90,12 +103,18 @@ class TicketSystem(commands.Cog):
 
         await ctx.send(embed=handle_tickets_embed, view=view)
 
-    @ticket.command()
+    @ticket.command(hidden=True)
     @commands.is_owner()
-    async def resolve(self, ctx: Context, item_id: int, comment: str | None):
-        if not self.bot.is_owner:
-            return
+    async def resolve(self, ctx: Context, item_id: int, comment: Any | None):
+        """Mark a ticket as resolved. This will delete the ticket from the DB and send a confirmation to the user.
 
+        Parameters
+        ----------
+        item_id : int
+            The id of the ticket submission
+        comment : Any | None
+            A comment made by the bot dev, if none it will send "No comment given" to the user
+        """
         if comment is None:
             comment = "No Comment Given"
 
@@ -104,14 +123,14 @@ class TicketSystem(commands.Cog):
                 """DELETE FROM tickets WHERE id = ? RETURNING *""",
                 item_id,
             )
+            await conn.commit()
 
             if row:
                 ticket_owner_id = self.bot.get_user(row["owner_id"])
-                content = row["content"]
 
                 remove_embed = discord.Embed(
                     title="You have marked this ticket submission as resolved",
-                    description=content,
+                    description=row["content"],
                     color=GREEN_EMBED_COLOR,
                 )
                 remove_embed.add_field(name="Comment", value=comment)
@@ -125,10 +144,12 @@ class TicketSystem(commands.Cog):
 
                 if ticket_owner_id:
                     owner_ticket_resolved_embed = discord.Embed(
-                        title=f"Hello {ticket_owner_id.name}, your ticket for me has been resolved.", description=content
+                        title=f"Hello {ticket_owner_id.name}, your ticket for me has been resolved.",
+                        description=row["content"],
+                        color=GREEN_EMBED_COLOR,
                     )
                     owner_ticket_resolved_embed.add_field(name="Comment", value=comment, inline=False)
-                    owner_ticket_resolved_embed.add_field(name="Your ticker id was", value=item_id, inline=False)
+                    owner_ticket_resolved_embed.add_field(name="Your ticket id was", value=item_id, inline=False)
                     owner_ticket_resolved_embed.set_footer(
                         text="Thank you for submitting a ticket! If there are any more problems, please submit another one."
                     )
@@ -136,8 +157,8 @@ class TicketSystem(commands.Cog):
 
                 return
 
-            unable_to_remove_emebed = create_embed_failure(message=f"Unable to resolve ticket with invalid ID: {item_id}")
-            await ctx.send(embed=unable_to_remove_emebed)
+            unable_to_resolve_emebed = create_embed_failure(message=f"Unable to resolve ticket with invalid ID: {item_id}")
+            await ctx.send(embed=unable_to_resolve_emebed)
 
 
 class ThisPaginator(BaseButtonPaginator[TicketItem, Millenia]):
