@@ -16,9 +16,9 @@ from utils.context import Context
 load_dotenv()
 
 DB_FILENAME = "millenia.sqlite"
-COMMAND_PREFIX = "m."  # Probably want to change this
-INTENTS = discord.Intents.all()  # probably want to change this too.
-TOKEN = str(os.getenv("DISCORD_BOT_TOKEN"))  # however you want to get this, probably reading it in from somewhere
+COMMAND_PREFIX = "aml "
+INTENTS = discord.Intents.all()
+TOKEN = str(os.getenv("DISCORD_BOT_TOKEN"))
 
 
 class Millenia(commands.Bot):
@@ -30,15 +30,18 @@ class Millenia(commands.Bot):
         self.STARTED_AT = discord.utils.utcnow()
 
     async def setup_hook(self) -> None:
-        # Load jishasku, allows you to a lot of cool stuff from your bot
-        # https://github.com/Gorialis/jishaku
-        # You might want to change some of the settings, but those are the ones I use...
         await self.load_extension("jishaku")
         os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
         os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
         os.environ["JISHAKU_HIDE"] = "True"
 
-        # This is an Umbra moment, loads anything in the cogs folder that doesn't start with an _
+        with open("schema.sql", "r") as file:
+            schema = file.read()
+
+        async with self.pool.acquire() as conn:
+            await conn.executescript(schema)
+
+        # Loads anything in the cogs folder that doesn't start with an _
         for file in sorted(pathlib.Path("cogs").glob("**/[!_]*.py")):
             ext = ".".join(file.parts).removesuffix(".py")
             await self.load_extension(ext)
@@ -52,12 +55,11 @@ class Millenia(commands.Bot):
 
 
 async def main():
-
     discord.utils.setup_logging()  # Could change this out for however you want logging to be setup
 
     async with (
         asqlite.create_pool(DB_FILENAME) as pool,
-        Millenia(command_prefix=COMMAND_PREFIX, pool=pool, intents=INTENTS) as bot
+        Millenia(command_prefix=COMMAND_PREFIX, pool=pool, intents=INTENTS) as bot,
     ):
         await bot.start(TOKEN)
 

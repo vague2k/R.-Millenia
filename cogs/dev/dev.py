@@ -21,7 +21,9 @@ class Developer(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.is_owner()
-    async def sync(self, ctx: GuildContext, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None) -> None:
+    async def sync(
+        self, ctx: GuildContext, guilds: commands.Greedy[discord.Object], spec: Optional[Literal["~", "*", "^"]] = None
+    ) -> None:
         """Syncs command tree.
 
         Parameters
@@ -71,7 +73,11 @@ class Developer(commands.Cog):
 
         message: discord.Message = discord.utils.get(
             self.bot.cached_messages, id=payload.message_id
-        ) or await self.bot.get_channel(payload.channel_id).fetch_message(payload.message_id)  # type: ignore
+        ) or await self.bot.get_channel(
+            payload.channel_id
+        ).fetch_message(  # type: ignore
+            payload.message_id
+        )
 
         if message.author.id == self.bot.user.id:  # type: ignore
             await message.delete()
@@ -84,8 +90,8 @@ class Developer(commands.Cog):
         """Run a command as another user optionally in another channel. This command respects checks and cooldowns.
 
         ex:
-            - m.sudo #general @fretgfr sync ~
-            - m.sudo @fretgfr sync ~
+            - aml sudo #general @fretgfr sync ~
+            - aml sudo @fretgfr sync ~
         """
         if not ctx.prefix:
             return
@@ -110,9 +116,9 @@ class Developer(commands.Cog):
         """Run a command, bypassing checks and/or cooldowns, optionally in another channel, optionally as another person.
 
         ex:
-            - m.sudo! #general @fretgfr sync ~
-            - m.sudo! @fretgfr sync ~
-            - m.sudo! sync ~      <----- This one runs it as you and allows you to bypass cooldowns on your own commands without a custom cooldown.
+            - aml sudo! #general @fretgfr sync ~
+            - aml sudo! @fretgfr sync ~
+            - aml sudo! sync ~      <----- This one runs it as you and allows you to bypass cooldowns on your own commands without a custom cooldown.
         """
         if not ctx.prefix:
             return

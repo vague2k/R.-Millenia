@@ -23,10 +23,12 @@ except ImportError:
 
 _logger = logging.getLogger(__name__)
 
+
 def natural_size(size: int) -> str:
-    unit = ('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB')
+    unit = ("B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB")
     power = int(math.log(max(abs(size), 1), 1024))
     return f"{size/(1024**power):.2f} {unit[power]}"
+
 
 class ApplicationInformation(commands.Cog):
     def __init__(self, bot: Millenia) -> None:
@@ -50,21 +52,39 @@ class ApplicationInformation(commands.Cog):
         # Add default invite link if app has one.
         if app_info.bot_public:
             if self.bot.user:
-                default_invite_link = discord.utils.oauth_url(self.bot.user.id, permissions=app_info.install_params.permissions) if app_info.install_params is not None else None
+                default_invite_link = (
+                    discord.utils.oauth_url(self.bot.user.id, permissions=app_info.install_params.permissions)
+                    if app_info.install_params is not None
+                    else None
+                )
                 if default_invite_link is not None:
                     embed.add_field(name="Invite Link", value=f'[Default Invite Link]({default_invite_link} "Invite URL")')
 
-        embed.add_field(name="Privacy Policy", value=f'[Privacy Policy]({app_info.privacy_policy_url} "Privacy Policy Link")' or "Doesn't have one", inline=False)
-        embed.add_field(name="Terms of Service", value=f'[Terms of Service]({app_info.terms_of_service_url} "Privacy Policy Link")' or "Doesn't have one.", inline=False)
+        embed.add_field(
+            name="Privacy Policy",
+            value=f'[Privacy Policy]({app_info.privacy_policy_url} "Privacy Policy Link")' or "Doesn't have one",
+            inline=False,
+        )
+        embed.add_field(
+            name="Terms of Service",
+            value=f'[Terms of Service]({app_info.terms_of_service_url} "Privacy Policy Link")' or "Doesn't have one.",
+            inline=False,
+        )
         embed.add_field(name="Tags", value=", ".join(app_info.tags) if app_info.tags else "Doesn't have any.", inline=False)
         embed.add_field(name="Description", value=app_info.description or "Doesn't have one.", inline=False)
         embed.add_field(name="Servers", value=f"{len(self.bot.guilds):,}")
         embed.add_field(name="Users", value=f"{len(self.bot.users):,}")
 
         if hasattr(self.bot, "STARTED_AT"):
-            embed.add_field(name="Bot Started", value=f"{format_dt(self.bot.STARTED_AT, 'F')} ({format_dt(self.bot.STARTED_AT, 'R')})", inline=False)
+            embed.add_field(
+                name="Bot Started",
+                value=f"{format_dt(self.bot.STARTED_AT, 'F')} ({format_dt(self.bot.STARTED_AT, 'R')})",
+                inline=False,
+            )
 
-        embed.add_field(name="Running On", value=f"{platform.system()} {platform.release()} ({platform.machine()})", inline=False)
+        embed.add_field(
+            name="Running On", value=f"{platform.system()} {platform.release()} ({platform.machine()})", inline=False
+        )
         embed.add_field(name="Python Version", value=f"{platform.python_implementation()} {platform.python_version()}")
         embed.add_field(name="discord.py Version", value=discord.__version__)
         embed.add_field(name="WS Latency", value=f"{self.bot.latency*1000:.3f}ms")
@@ -83,13 +103,25 @@ class ApplicationInformation(commands.Cog):
                 l_5 *= 100
                 l_15 *= 100
 
-            embed.add_field(name="Server Started", value=f"{format_dt(datetime.datetime.fromtimestamp(psutil.boot_time()).replace(tzinfo=datetime.timezone.utc), 'F')} ({format_dt(datetime.datetime.fromtimestamp(psutil.boot_time()).replace(tzinfo=datetime.timezone.utc), 'R')})", inline=False)
+            embed.add_field(
+                name="Server Started",
+                value=f"{format_dt(datetime.datetime.fromtimestamp(psutil.boot_time()).replace(tzinfo=datetime.timezone.utc), 'F')} ({format_dt(datetime.datetime.fromtimestamp(psutil.boot_time()).replace(tzinfo=datetime.timezone.utc), 'R')})",
+                inline=False,
+            )
             embed.add_field(name="CPU Count", value=f"{psutil.cpu_count()} ({platform.processor()})")
-            embed.add_field(name="Bot Using Memory", value=f"Physical: {natural_size(mem.rss)} || Virtual: {natural_size(mem.vms)}", inline=False)
+            embed.add_field(
+                name="Bot Using Memory",
+                value=f"Physical: {natural_size(mem.rss)} || Virtual: {natural_size(mem.vms)}",
+                inline=False,
+            )
 
             v_mem = psutil.virtual_memory()
 
-            embed.add_field(name="Memory Info", value=f"Available: {natural_size(v_mem.available)} | Total: {natural_size(v_mem.total)}", inline=False)
+            embed.add_field(
+                name="Memory Info",
+                value=f"Available: {natural_size(v_mem.available)} | Total: {natural_size(v_mem.total)}",
+                inline=False,
+            )
             embed.add_field(name="Memory % Used", value=f"{v_mem.percent}%")
             embed.add_field(name="Thread Count", value=f"{proc.num_threads()}")
             embed.add_field(name="Load Averages", value=f"1m: {l_1:.3f}% 5m: {l_5:.3f}% 15m: {l_15:.3f}%", inline=False)
@@ -119,6 +151,7 @@ class ApplicationInformation(commands.Cog):
 async def setup(bot: Millenia):
     _logger.info("Loading cog ApplicationInformation")
     await bot.add_cog(ApplicationInformation(bot))
+
 
 async def teardown(_: Millenia):
     _logger.info("Unloading cog ApplicationInformation")
