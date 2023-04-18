@@ -3,4 +3,5 @@ asyncpraw
 aiofiles
 psutil
 jishaku
+python-dotenv
 git+https://github.com/Rapptz/asqlite
