@@ -34,7 +34,7 @@ class Millenia(commands.Bot):
 
     async def setup_hook(self) -> None:
         await self.load_extension("jishaku")
-        os.environ["JISHAKU_NO_UNDERSCORE"] = "True"
+        os.environ["JISHAKU_NO_UNDERSCORE"] = "True"  #
         os.environ["JISHAKU_NO_DM_TRACEBACK"] = "True"
         os.environ["JISHAKU_HIDE"] = "True"
 
