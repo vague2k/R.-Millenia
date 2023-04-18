@@ -19,7 +19,7 @@ load_dotenv()
 TESTING = sys.platform == "win32"
 
 DB_FILENAME = "millenia.sqlite" if not TESTING else "test-millenia.sqlite"
-COMMAND_PREFIX = "aml " if not TESTING else "amt "
+COMMAND_PREFIX = "aml "
 INTENTS = discord.Intents.all()
 TOKEN = str(os.getenv("DISCORD_BOT_TOKEN")) if not TESTING else str(os.getenv("TEST_BOT_TOKEN"))
 
