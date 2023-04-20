@@ -17,11 +17,12 @@ from utils.context import Context
 load_dotenv()
 
 TESTING = sys.platform == "win32"
+TESTING_MAC = sys.platform == "darwin"
 
-DB_FILENAME = "millenia.sqlite" if not TESTING else "test-millenia.sqlite"
+DB_FILENAME = "millenia.sqlite" if not TESTING or TESTING_MAC else "test-millenia.sqlite"
 COMMAND_PREFIX = "aml "
 INTENTS = discord.Intents.all()
-TOKEN = str(os.getenv("DISCORD_BOT_TOKEN")) if not TESTING else str(os.getenv("TEST_BOT_TOKEN"))
+TOKEN = str(os.getenv("DISCORD_BOT_TOKEN")) if not TESTING or TESTING_MAC else str(os.getenv("TEST_BOT_TOKEN"))
 
 
 class Millenia(commands.Bot):
