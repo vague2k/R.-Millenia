@@ -1,6 +1,7 @@
 import datetime
 import logging
 from datetime import timezone
+from typing import Optional
 
 import discord
 from discord.ext import commands
@@ -18,9 +19,17 @@ class Cleanup(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.guild_only()
-    async def cleanup(self, ctx: GuildContext):
+    async def cleanup(self, ctx: GuildContext, limit: int | None = 25):
+        """Deletes any messages sent by the bot, or message starting with the bot prefix.
+
+        Parameters
+        ----------
+        limit : Optional[int] | None, optional
+            the amount of message you want to delete, by default 25
+        """
+
         deleted = await ctx.channel.purge(
-            check=lambda m: m.author == self.bot.user or ctx.message.content.startswith("aml ")
+            check=lambda m: m.author == self.bot.user or m.content.startswith("aml"), limit=limit
         )
 
         messages_deleted_embed = create_embed_success(message=f"Deleted {len(deleted)} messages")
