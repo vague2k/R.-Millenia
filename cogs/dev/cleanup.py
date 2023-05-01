@@ -20,8 +20,7 @@ class Cleanup(commands.Cog):
     @commands.guild_only()
     async def cleanup(self, ctx: GuildContext):
         deleted = await ctx.channel.purge(
-            check=lambda m: m.author == self.bot.user or ctx.message.content.startswith("aml "),
-            after=discord.utils.utcnow() - datetime.timedelta(minutes=5),
+            check=lambda m: m.author == self.bot.user or ctx.message.content.startswith("aml ")
         )
 
         messages_deleted_embed = create_embed_success(message=f"Deleted {len(deleted)} messages")
