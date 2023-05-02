@@ -4,4 +4,5 @@ aiofiles
 psutil
 jishaku
 python-dotenv
+Pillow
 git+https://github.com/Rapptz/asqlite
