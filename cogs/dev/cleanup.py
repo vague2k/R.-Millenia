@@ -17,7 +17,7 @@ class Cleanup(commands.Cog):
     def __init__(self, bot: Millenia):
         self.bot = bot
 
-    @commands.command(hidden=True)
+    @commands.command()
     @commands.guild_only()
     async def cleanup(self, ctx: GuildContext, limit: int | None = 25):
         """Deletes any messages sent by the bot, or message starting with the bot prefix.
