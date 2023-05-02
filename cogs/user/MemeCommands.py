@@ -7,6 +7,7 @@ from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 from millenia import Millenia
+from utils.context import GuildContext
 
 _logger = logging.getLogger(__name__)
 
@@ -36,6 +37,13 @@ class MemeCommands(commands.Cog):
         img.save(buff, format="jpeg")
         buff.seek(0)
         await interaction.response.send_message(file=discord.File(buff, "spg-screaming.jpeg"))
+
+    @commands.command(name="flmancode")
+    @commands.guild_only()
+    async def florida_man_code(self, ctx: GuildContext):
+        file = discord.File("assets/florida_man_code.png")
+
+        await ctx.send(file=file)
 
 
 async def setup(bot: Millenia):
