@@ -130,6 +130,22 @@ class Developer(commands.Cog):
         new_ctx = await self.bot.get_context(msg, cls=type(ctx))
         await new_ctx.reinvoke()
 
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def toggle(self, ctx: Context, *, command):
+        command = self.bot.get_command(command)
+
+        if command is None:
+            await ctx.send(f"I can't find command of name: `{command}`")
+        
+        elif ctx.command == command:
+            await ctx.send(f"You cannot disable this commands: `{command}`")
+        
+        else:
+            command.enabled = not command.enabled
+            ternary = "enabled" if command.enabled else "disabled"
+            await ctx.send(f"I have {ternary} `{command.qualified_name}` for you.")
+
 
 async def setup(bot: Millenia):
     _logger.info("Loading cog Developer")
