@@ -1,6 +1,5 @@
 import logging
 import os
-from typing import Optional
 
 import replicate
 from discord.ext import commands

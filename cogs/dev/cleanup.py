@@ -1,14 +1,10 @@
-import datetime
 import logging
-from datetime import timezone
-from typing import Optional
 
-import discord
 from discord.ext import commands
 
 from millenia import Millenia
 from utils.context import GuildContext
-from utils.embed import create_embed_failure, create_embed_success
+from utils.embed import create_embed_success
 
 _logger = logging.getLogger(__name__)
 
