@@ -1,6 +1,10 @@
+import json
 import logging
 import os
+from io import BytesIO
+from tempfile import TemporaryDirectory
 
+import discord
 import replicate
 from discord.ext import commands
 
@@ -18,7 +22,7 @@ class UpScalerCog(commands.Cog):
     
 
     @commands.command()
-    async def upscale (self, ctx: Context):
+    async def upscale (self, ctx: Context, image: discord.Attachment):
         """Upscale and clean up an image.
         \n
         This image must be downloaded to use in the api as a path, as the api cannot handle image url links, or buffers
@@ -30,31 +34,22 @@ class UpScalerCog(commands.Cog):
         ctx : `Context`
             The command's context
         """
-        message = ctx.message
-        image = message.attachments[0].url
-        no_image_embed = create_embed_failure(message="No image was provided")
+        
         image_provided_embed = create_embed_success(message="Output image loading, this may take up to 20 seconds")
 
-        if not image:
-            await ctx.send(embed=no_image_embed)
-            return
+        await ctx.send(embed=image_provided_embed)
 
-        if image:
-            # This image must be downloaded to use in the api as a path, as the api cannot handle image url links, or buffers
-            saved_image = DiscordImageSaver(image, ctx.author.id, "bucket/upscale_images")
-            await saved_image.save_image_from_url()
-            await ctx.send(embed=image_provided_embed)
+        buffer = BytesIO(await image.read())
 
-            output_image = replicate.run(
-                "nightmareai/real-esrgan:42fed1c4974146d4d2414e2be2c5277c7fcf05fcc3a73abf41610695738c1d7b", 
-                input={
-                    # the downloaded image path is then used here
-                    "image": open(f"bucket/upscale_images/{saved_image.image_name}", "rb"),
-                }
-            )
-            await ctx.send(f"{output_image}")
+        output_image = replicate.run(
+            "nightmareai/real-esrgan:42fed1c4974146d4d2414e2be2c5277c7fcf05fcc3a73abf41610695738c1d7b", 
+            input={
+                "image": buffer
+            }
+        )
+        await ctx.send(f"{output_image}")
 
-            os.remove(f"bucket/upscale_images/{saved_image.image_name}")
+        #os.remove(f"{path}")
 
 async def setup(bot: Millenia):
     _logger.info("Loading cog ToDoCog")
