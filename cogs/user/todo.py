@@ -66,7 +66,7 @@ class ToDoCog(commands.Cog):
 
         async with self.bot.pool.acquire() as conn:
             results = await conn.fetchall(
-                """SELECT * FROM todos WHERE owner_id = ?""", ctx.author.id
+                """SELECT * FROM todos WHERE owner_id = ? AND guild_id = ?""", ctx.author.id, ctx.guild.id
             )
 
         if not results:
@@ -93,8 +93,9 @@ class ToDoCog(commands.Cog):
         """
         async with self.bot.pool.acquire() as conn:
             row = await conn.fetchone(
-                """DELETE FROM todos WHERE owner_id = ? AND id = ? RETURNING *""",
+                """DELETE FROM todos WHERE owner_id = ? AND guild_id = ? AND id = ? RETURNING *""",
                 ctx.author.id,
+                ctx.guild.id,
                 item_id,
             )
 
