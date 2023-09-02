@@ -8,7 +8,7 @@ from discord.ext import commands
 
 from millenia import Millenia
 from utils.constants import GREEN_EMBED_COLOR
-from utils.context import GuildContext
+from utils.context import Context
 from utils.dataclasses import TodoItem
 from utils.embed import create_embed_failure, create_embed_success
 from utils.paginator import BaseButtonPaginator
@@ -21,12 +21,12 @@ class ToDoCog(commands.Cog):
         self.bot = bot
 
     @commands.group()
-    async def todo(self, ctx: GuildContext) -> None:
+    async def todo(self, ctx: Context) -> None:
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
 
     @todo.command(name="add")
-    async def add_todo_item(self, ctx: GuildContext, *, content: str):
+    async def add_todo_item(self, ctx: Context, *, content: str):
         """Add an item to your to-do list.
 
         Parameters
@@ -61,7 +61,7 @@ class ToDoCog(commands.Cog):
         await ctx.send(embed=added_to_list_embed)
 
     @todo.command(name="list")
-    async def list_all_todo_items(self, ctx: GuildContext):
+    async def list_all_todo_items(self, ctx: Context):
         """List all your todo items"""
 
         async with self.bot.pool.acquire() as conn:
@@ -83,7 +83,7 @@ class ToDoCog(commands.Cog):
         await ctx.send(embed=todo_embed, view=view)
 
     @todo.command(name="remove")
-    async def remove_todo_item(self, ctx: GuildContext, item_id: int):
+    async def remove_todo_item(self, ctx: Context, item_id: int):
         """Remove an item from your to-do list using the item id.
 
         Parameters
